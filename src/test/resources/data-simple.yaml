@@ -1,0 +1,19 @@
+model.morphia.Address(addr1):
+  unit: 1
+  street: 4 Park St
+  suburb: Bankstown
+
+model.morphia.Address(addr2):
+  unit: 5
+  street: 13 Geroge Cl
+  suburb: Windsor
+
+model.morphia.Contact(tom):
+  firstName: Tom
+  lastName: White
+  address: $addr1
+
+model.morphia.Contact(peter):
+  firstName: Peter
+  lastName: Black
+  address: $addr2
