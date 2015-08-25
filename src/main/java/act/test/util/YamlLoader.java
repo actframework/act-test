@@ -26,11 +26,11 @@ public class YamlLoader {
 
     static Pattern keyPattern = Pattern.compile("([^(]+)\\(([^)]+)\\)");
 
-    public Map<Class, List> load(File yamlFile, String modelPackage, DaoLocator daoLocator) {
+    public Map<String, Object> load(File yamlFile, String modelPackage, DaoLocator daoLocator) {
         return load(IO.readContentAsString(yamlFile), modelPackage, daoLocator);
     }
 
-    public Map<Class, List> load(URL yamlFile, String modelPackage, DaoLocator daoLocator) {
+    public Map<String, Object> load(URL yamlFile, String modelPackage, DaoLocator daoLocator) {
         try {
             return load(IO.readContentAsString(yamlFile.openStream()), modelPackage, daoLocator);
         } catch (IOException e) {
@@ -44,8 +44,7 @@ public class YamlLoader {
      * @param modelPackage the predefined model package to be prepend to type if no package specified
      * @return the data object list mapped to class
      */
-    public Map<Class, List> load(String yamlFile, String modelPackage, DaoLocator daoLocator) {
-        Map<Class, List> repo = C.newMap();
+    public Map<String, Object> load(String yamlFile, String modelPackage, DaoLocator daoLocator) {
         Map<Object, Map<?, ?>> objects = _.cast(new Yaml().load(yamlFile));
         Map<String, JSONObject> jsonCache = C.newMap();
         Map<String, Object> entityCache = C.newMap();
@@ -64,13 +63,8 @@ public class YamlLoader {
                     modelType = _.classForName(type);
                     classCache.put(type, modelType);
                 }
-                List list = repo.get(modelType);
-                if (null == list) {
-                    list = C.newList();
-                    repo.put(modelType, list);
-                }
 
-                if (jsonCache.containsKey(id)) {
+                if (null != id && jsonCache.containsKey(id)) {
                     throw E.unexpected("Duplicate id '" + id + "' for type " + type);
                 }
 
@@ -83,11 +77,12 @@ public class YamlLoader {
                 if (null != dao) {
                     dao.save(entity);
                 }
-                entityCache.put(id, entity);
-                list.add(entity);
+                if (null != id) {
+                    entityCache.put(id, entity);
+                }
             }
         }
-        return repo;
+        return entityCache;
     }
 
     private void resolveDependencies(JSONObject objects, Map<String, JSONObject> jsonCache, Map<String, Object> entityCache, Dao dao) {

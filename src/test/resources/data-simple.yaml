@@ -13,7 +13,7 @@ model.morphia.Contact(tom):
   lastName: White
   address: $addr1
 
-model.morphia.Contact(peter):
+model.morphia.Contact:
   firstName: Peter
   lastName: Black
   address: $addr2

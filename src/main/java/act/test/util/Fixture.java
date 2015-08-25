@@ -22,7 +22,7 @@ public class Fixture {
         yamlLoader = new YamlLoader();
     }
 
-    public void loadYamlFile(String yamlFile) {
+    public Map<String, Object> loadYamlFile(String yamlFile) {
         File file = new File(yamlFile);
         Map<Class, List> repo;
         if (!file.exists() && !file.canRead()) {
@@ -30,10 +30,10 @@ public class Fixture {
             if (null == url) {
                 throw E.unexpected("Cannot find yaml file: %s", yamlFile);
             } else {
-                repo = yamlLoader.load(url, "model", dbServiceManager);
+                return yamlLoader.load(url, "model", dbServiceManager);
             }
         } else {
-            repo = yamlLoader.load(file, "model", dbServiceManager);
+            return yamlLoader.load(file, "model", dbServiceManager);
         }
     }
 
