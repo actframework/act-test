@@ -11,6 +11,7 @@ import act.controller.bytecode.ControllerByteCodeScanner;
 import act.controller.meta.ControllerClassMetaInfo;
 import act.controller.meta.ControllerClassMetaInfoManager;
 import act.event.EventBus;
+import act.job.AppJobManager;
 import act.job.bytecode.JobByteCodeScanner;
 import act.job.meta.JobClassMetaInfoManager;
 import act.mail.bytecode.MailerByteCodeScanner;
@@ -19,7 +20,6 @@ import act.route.Router;
 import act.test.util.ActTestRunner;
 import act.util.AsmByteCodeEnhancer;
 import act.util.ByteCodeVisitor;
-import act.util.ClassInfoByteCodeScanner;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -34,8 +34,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,11 +49,17 @@ public class ActTestClassLoader extends URLClassLoader {
     protected MailerClassMetaInfoManager mailerInfo = new MailerClassMetaInfoManager();
     protected JobClassMetaInfoManager jobInfo = new JobClassMetaInfoManager();
     private AppCodeScannerManager scannerManager;
+    private Properties testConf;
 
     public ActTestClassLoader(App app, List<String> actClassNamePatterns) {
         super(urls(ActTestRunner.class.getClassLoader()), ActTestRunner.class.getClassLoader());
         this.classNamePattern = _.notNull(actClassNamePatterns);
         this.app(app);
+    }
+
+    public ActTestClassLoader testProperties(Properties p) {
+        testConf = p;
+        return this;
     }
 
     public ActTestClassLoader app(App app) {
@@ -75,13 +81,24 @@ public class ActTestClassLoader extends URLClassLoader {
         when(app.eventBus()).thenReturn(bus);
 
         AppConfig config = mock(AppConfig.class);
+        when(config.get(anyString())).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                String key = (String) invocationOnMock.getArguments()[0];
+                return testConf.getProperty(key);
+            }
+        });
         when(app.config()).thenReturn(config);
         when(config.possibleControllerClass(anyString())).thenReturn(true);
+        when(config.jobPoolSize()).thenReturn(2);
 
         Router router = mock(Router.class);
         when(app.router()).thenReturn(router);
         when(app.router(anyString())).thenReturn(router);
         when(router.possibleController(anyString())).thenReturn(true);
+
+        AppJobManager jobManager = new AppJobManager(app);
+        when(app.jobManager()).thenReturn(jobManager);
 
         scannerManager = new AppCodeScannerManager(app);
         scannerManager.register(new ControllerByteCodeScanner());

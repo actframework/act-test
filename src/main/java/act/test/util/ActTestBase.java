@@ -53,10 +53,12 @@ public class ActTestBase extends Assert {
         cache = mock(CacheService.class);
         request = mock(H.Request.class);
         response = mock(H.Response.class);
+        session = new H.Session();
         jobManager = mock(AppJobManager.class);
         eventBus = mock(EventBus.class);
         appConfig = mock(AppConfig.class);
         actionContext = spy(ActionContext.create(app, request, response));
+        doReturn(session).when(actionContext).session();
         router = mock(Router.class);
         Field f = App.class.getDeclaredField("INST");
         f.setAccessible(true);

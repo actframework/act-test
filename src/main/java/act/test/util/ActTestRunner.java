@@ -9,8 +9,12 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 import org.osgl._;
+import org.osgl.util.E;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Allow it to run the test in the context of {@link ActTestClassLoader}
@@ -25,6 +29,16 @@ public class ActTestRunner extends Runner {
         App app = Mockito.mock(App.class);
         List<String> pattern = ActClassDiscoverer.getActClassNamePatternsOn(testFileClass);
         classLoader =  new ActTestClassLoader(app, pattern);
+        URL url = getClass().getResource("/act-test.properties");
+        if (null != url) {
+            Properties p = new Properties();
+            try {
+                p.load(url.openStream());
+            } catch (IOException e) {
+                throw E.ioException(e);
+            }
+            classLoader.testProperties(p);
+        }
         Thread.currentThread().setContextClassLoader(classLoader);
         innerRunnerClass = _.classForName(JUnit4.class.getName(), classLoader);
         String testFileClassName = testFileClass.getName();
