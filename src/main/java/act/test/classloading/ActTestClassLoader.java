@@ -1,12 +1,30 @@
 package act.test.classloading;
 
 import act.app.App;
+import act.app.AppByteCodeScanner;
+import act.app.AppClassLoader;
+import act.app.AppCodeScannerManager;
 import act.asm.ClassReader;
 import act.asm.ClassWriter;
+import act.conf.AppConfig;
+import act.controller.bytecode.ControllerByteCodeScanner;
+import act.controller.meta.ControllerClassMetaInfo;
+import act.controller.meta.ControllerClassMetaInfoManager;
+import act.event.EventBus;
+import act.job.bytecode.JobByteCodeScanner;
+import act.job.meta.JobClassMetaInfoManager;
+import act.mail.bytecode.MailerByteCodeScanner;
+import act.mail.meta.MailerClassMetaInfoManager;
+import act.route.Router;
 import act.test.util.ActTestRunner;
 import act.util.AsmByteCodeEnhancer;
 import act.util.ByteCodeVisitor;
+import act.util.ClassInfoByteCodeScanner;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.osgl._;
+import org.osgl.exception.UnexpectedException;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.IO;
@@ -15,21 +33,60 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ActTestClassLoader extends URLClassLoader {
 
     private C.List<ByteCodeEnhancer> enhancerList = C.newList();
     private App app;
-    private String[] classNamePattern;
+    private List<String> classNamePattern;
+    protected ControllerClassMetaInfoManager controllerInfo = new ControllerClassMetaInfoManager();
+    protected MailerClassMetaInfoManager mailerInfo = new MailerClassMetaInfoManager();
+    protected JobClassMetaInfoManager jobInfo = new JobClassMetaInfoManager();
+    private AppCodeScannerManager scannerManager;
 
-    public ActTestClassLoader(App app, String[] actClassNamePatterns) {
+    public ActTestClassLoader(App app, List<String> actClassNamePatterns) {
         super(urls(ActTestRunner.class.getClassLoader()), ActTestRunner.class.getClassLoader());
-        this.app = _.notNull(app);
         this.classNamePattern = _.notNull(actClassNamePatterns);
+        this.app(app);
     }
 
     public ActTestClassLoader app(App app) {
         this.app = _.notNull(app);
+        AppClassLoader cl = mock(AppClassLoader.class);
+        when(app.classLoader()).thenReturn(cl);
+        when(cl.controllerClassMetaInfo(Mockito.anyString())).thenAnswer(new Answer<ControllerClassMetaInfo>() {
+            @Override
+            public ControllerClassMetaInfo answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return controllerInfo.controllerMetaInfo((String) args[0]);
+            }
+        });
+        when(cl.controllerClassMetaInfoManager()).thenReturn(controllerInfo);
+        when(cl.mailerClassMetaInfoManager()).thenReturn(mailerInfo);
+        when(cl.jobClassMetaInfoManager()).thenReturn(jobInfo);
+
+        EventBus bus = mock(EventBus.class);
+        when(app.eventBus()).thenReturn(bus);
+
+        AppConfig config = mock(AppConfig.class);
+        when(app.config()).thenReturn(config);
+        when(config.possibleControllerClass(anyString())).thenReturn(true);
+
+        Router router = mock(Router.class);
+        when(app.router()).thenReturn(router);
+        when(app.router(anyString())).thenReturn(router);
+        when(router.possibleController(anyString())).thenReturn(true);
+
+        scannerManager = new AppCodeScannerManager(app);
+        scannerManager.register(new ControllerByteCodeScanner());
+        scannerManager.register(new MailerByteCodeScanner());
+        scannerManager.register(new JobByteCodeScanner());
         addEnhancer(ByteCodeEnhancer.CONTROLLER);
         addEnhancer(ByteCodeEnhancer.MAILER);
         return this;
@@ -55,26 +112,22 @@ public class ActTestClassLoader extends URLClassLoader {
     }
 
     private boolean isProtectedClass(String name) {
-        if (classNamePattern.length > 0) {
+        if (!classNamePattern.isEmpty()) {
             for (String s : classNamePattern) {
                 if (name.startsWith(s)) {
-                    return true;
+                    return false;
                 }
                 if (name.matches(s)) {
-                    return true;
+                    return false;
                 }
             }
-            return true;
         }
-        return name.startsWith("java") || name.startsWith("sun") || name.startsWith("org.junit");
+        return true;
     }
 
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         String path = name.replace('.', '/').concat(".class");
-        if (name.contains("MockitoConfiguration")) {
-            _.nil();
-        }
         URL res = getResource(path);
         if (res != null) {
             try {
@@ -102,11 +155,36 @@ public class ActTestClassLoader extends URLClassLoader {
 
     private Class defineClassX(String name, byte[] bytecode) {
         Class<?> c;
-        _.Var<ClassWriter> cw = _.val(null);
+        _.Var<ClassWriter> cw = _.var(null);
         ByteCodeVisitor enhancer = enhancer(name, cw);
         if (null == enhancer) {
             c = defineClassX(name, bytecode, 0, bytecode.length);
         } else {
+            // try to scan code
+            List<ByteCodeVisitor> visitors = C.newList();
+            List<AppByteCodeScanner> scanners = C.newList();
+            for (AppByteCodeScanner scanner : scannerManager.byteCodeScanners()) {
+                if (scanner.start(name)) {
+                    visitors.add(scanner.byteCodeVisitor());
+                    scanners.add(scanner);
+                }
+            }
+            ByteCodeVisitor theVisitor = ByteCodeVisitor.chain(visitors);
+            ClassReader cr = new ClassReader(bytecode);
+            try {
+                cr.accept(theVisitor, 0);
+            } catch (UnexpectedException e) {
+                Throwable t = e.getCause();
+                if (t instanceof ClassNotFoundException) {
+                    //continue;
+                } else {
+                    throw e;
+                }
+            }
+            for (AppByteCodeScanner scanner : scanners) {
+                scanner.scanFinished(name);
+            }
+            // start to enhance
             ClassWriter w = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             cw.set(w);
             enhancer.commitDownstream();

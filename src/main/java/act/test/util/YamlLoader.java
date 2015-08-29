@@ -60,7 +60,7 @@ public class YamlLoader {
 
                 Class<?> modelType = classCache.get(type);
                 if (null == modelType) {
-                    modelType = _.classForName(type);
+                    modelType = _.classForName(type, Thread.currentThread().getContextClassLoader());
                     classCache.put(type, modelType);
                 }
 
@@ -107,7 +107,11 @@ public class YamlLoader {
                     } else if (null == dao) {
                         throw E.unexpected("Cannot resolve reference when Dao is missing");
                     }
-                    objects.put(k, dao.getId(reference));
+                    Object theId = dao.getId(reference);
+//                    if (!isBuiltIn(theId)) {
+//                        theId = theId.toString();
+//                    }
+                    objects.put(k, theId);
                 }
             } else if (v instanceof JSONArray) {
                 JSONArray array = (JSONArray) v;
@@ -133,12 +137,21 @@ public class YamlLoader {
                             } else if (null == dao) {
                                 throw E.unexpected("Cannot resolve reference when Dao is missing");
                             }
-                            array.set(i, dao.getId(reference));
+                            Object theId = dao.getId(reference);
+//                            if (!isBuiltIn(theId)) {
+//                                theId = theId.toString();
+//                            }
+                            array.set(i, theId);
                         }
                     }
                 }
             }
         }
+    }
+
+    private static boolean isBuiltIn(Object o) {
+        String cn = o.getClass().getName();
+        return (cn.startsWith("java.lang"));
     }
 
 }

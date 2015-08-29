@@ -10,6 +10,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 import org.osgl._;
 
+import java.util.List;
+
 /**
  * Allow it to run the test in the context of {@link ActTestClassLoader}
  */
@@ -21,8 +23,9 @@ public class ActTestRunner extends Runner {
 
     public ActTestRunner(Class<?> testFileClass) {
         App app = Mockito.mock(App.class);
-        String[] pattern = ActClassDiscoverer.getActClassNamePatternsOn(testFileClass);
+        List<String> pattern = ActClassDiscoverer.getActClassNamePatternsOn(testFileClass);
         classLoader =  new ActTestClassLoader(app, pattern);
+        Thread.currentThread().setContextClassLoader(classLoader);
         innerRunnerClass = _.classForName(JUnit4.class.getName(), classLoader);
         String testFileClassName = testFileClass.getName();
         Class<?> testClass = _.classForName(testFileClassName, classLoader);
