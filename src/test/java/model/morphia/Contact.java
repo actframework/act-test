@@ -3,7 +3,7 @@ package model.morphia;
 import act.db.morphia.MorphiaDao;
 import act.db.morphia.MorphiaModel;
 import org.bson.types.ObjectId;
-import org.osgl._;
+import org.osgl.$;
 
 import javax.inject.Inject;
 
@@ -60,7 +60,7 @@ public class Contact extends MorphiaModel {
         @Inject
         public Dao(Account.Dao accDao) {
             super(Contact.class);
-            this.accDao = _.NPE(accDao);
+            this.accDao = $.NPE(accDao);
         }
 
         public Account getCompany(Contact contact) {

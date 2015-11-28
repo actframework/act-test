@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.util.E;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class MorphiaFixtureTest extends MongoTestBase {
             @Override
             public Dao answer(InvocationOnMock invocationOnMock) throws Throwable {
                 Object[] args = invocationOnMock.getArguments();
-                Class<?> modelType = _.cast(args[0]);
+                Class<?> modelType = $.cast(args[0]);
                 if (Account.class.isAssignableFrom(modelType)) {
                     return accDao;
                 } else if (Contact.class.isAssignableFrom(modelType)) {

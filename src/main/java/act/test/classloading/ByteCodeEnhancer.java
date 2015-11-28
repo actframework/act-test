@@ -6,7 +6,7 @@ import act.controller.bytecode.ControllerEnhancer;
 import act.mail.bytecode.MailerEnhancer;
 import act.util.AppByteCodeEnhancer;
 import act.util.AsmByteCodeEnhancer;
-import org.osgl._;
+import org.osgl.$;
 
 enum ByteCodeEnhancer {
 
@@ -16,11 +16,11 @@ enum ByteCodeEnhancer {
     private Class<? extends AsmByteCodeEnhancer> enhancer;
 
     private ByteCodeEnhancer(Class<? extends AsmByteCodeEnhancer> enhancer) {
-        this.enhancer = _.notNull(enhancer);
+        this.enhancer = $.notNull(enhancer);
     }
 
     public AsmByteCodeEnhancer enhancer(App app) {
-        AsmByteCodeEnhancer e = _.newInstance(enhancer);
+        AsmByteCodeEnhancer e = $.newInstance(enhancer);
         if (e instanceof AppByteCodeEnhancer) {
             ((AppByteCodeEnhancer) e).app(app);
         }

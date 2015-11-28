@@ -5,7 +5,7 @@ import act.db.Dao;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.util.C;
 import org.osgl.util.E;
 import org.osgl.util.IO;
@@ -45,7 +45,7 @@ public class YamlLoader {
      * @return the data object list mapped to class
      */
     public Map<String, Object> load(String yamlFile, String modelPackage, DaoLocator daoLocator) {
-        Map<Object, Map<?, ?>> objects = _.cast(new Yaml().load(yamlFile));
+        Map<Object, Map<?, ?>> objects = $.cast(new Yaml().load(yamlFile));
         Map<String, JSONObject> jsonCache = C.newMap();
         Map<String, Object> entityCache = C.newMap();
         Map<String, Class> classCache = C.newMap();
@@ -60,7 +60,7 @@ public class YamlLoader {
 
                 Class<?> modelType = classCache.get(type);
                 if (null == modelType) {
-                    modelType = _.classForName(type, Thread.currentThread().getContextClassLoader());
+                    modelType = $.classForName(type, Thread.currentThread().getContextClassLoader());
                     classCache.put(type, modelType);
                 }
 

@@ -23,7 +23,7 @@ import act.util.ByteCodeVisitor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.exception.UnexpectedException;
 import org.osgl.util.C;
 import org.osgl.util.E;
@@ -53,7 +53,7 @@ public class ActTestClassLoader extends URLClassLoader {
 
     public ActTestClassLoader(App app, List<String> actClassNamePatterns) {
         super(urls(ActTestRunner.class.getClassLoader()), ActTestRunner.class.getClassLoader());
-        this.classNamePattern = _.notNull(actClassNamePatterns);
+        this.classNamePattern = $.notNull(actClassNamePatterns);
         this.app(app);
     }
 
@@ -63,7 +63,7 @@ public class ActTestClassLoader extends URLClassLoader {
     }
 
     public ActTestClassLoader app(App app) {
-        this.app = _.notNull(app);
+        this.app = $.notNull(app);
         AppClassLoader cl = mock(AppClassLoader.class);
         when(app.classLoader()).thenReturn(cl);
         when(cl.controllerClassMetaInfo(Mockito.anyString())).thenAnswer(new Answer<ControllerClassMetaInfo>() {
@@ -162,7 +162,7 @@ public class ActTestClassLoader extends URLClassLoader {
         return defineClassX(name, ba);
     }
 
-    private ByteCodeVisitor enhancer(String className, _.Var<ClassWriter> cw) {
+    private ByteCodeVisitor enhancer(String className, $.Var<ClassWriter> cw) {
         List<AsmByteCodeEnhancer> l = C.newList();
         for (ByteCodeEnhancer e : enhancerList) {
             l.add(e.enhancer(app));
@@ -172,7 +172,7 @@ public class ActTestClassLoader extends URLClassLoader {
 
     private Class defineClassX(String name, byte[] bytecode) {
         Class<?> c;
-        _.Var<ClassWriter> cw = _.var(null);
+        $.Var<ClassWriter> cw = $.var(null);
         ByteCodeVisitor enhancer = enhancer(name, cw);
         if (null == enhancer) {
             c = defineClassX(name, bytecode, 0, bytecode.length);
@@ -223,7 +223,7 @@ public class ActTestClassLoader extends URLClassLoader {
     }
 
     private static URL[] urls(ClassLoader parent) {
-        URLClassLoader ucl = _.cast(parent);
+        URLClassLoader ucl = $.cast(parent);
         return ucl.getURLs();
     }
 

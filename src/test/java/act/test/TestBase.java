@@ -11,7 +11,7 @@ import org.junit.runner.JUnitCore;
 import org.mockito.internal.matchers.StartsWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.http.H;
 import act.app.App;
 import act.app.ActionContext;
@@ -121,7 +121,7 @@ public class TestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class)args[0]);
+                return $.newInstance((Class)args[0]);
             }
         });
         mockRouter = mock(Router.class);
@@ -131,7 +131,7 @@ public class TestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class)args[0]);
+                return $.newInstance((Class)args[0]);
             }
         });
         mockReq = mock(H.Request.class);

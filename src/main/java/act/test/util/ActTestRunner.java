@@ -8,7 +8,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.util.E;
 
 import java.io.IOException;
@@ -40,10 +40,10 @@ public class ActTestRunner extends Runner {
             classLoader.testProperties(p);
         }
         Thread.currentThread().setContextClassLoader(classLoader);
-        innerRunnerClass = _.classForName(JUnit4.class.getName(), classLoader);
+        innerRunnerClass = $.classForName(JUnit4.class.getName(), classLoader);
         String testFileClassName = testFileClass.getName();
-        Class<?> testClass = _.classForName(testFileClassName, classLoader);
-        innerRunner = _.newInstance(innerRunnerClass, testClass);
+        Class<?> testClass = $.classForName(testFileClassName, classLoader);
+        innerRunner = $.newInstance(innerRunnerClass, testClass);
     }
 
     @Override

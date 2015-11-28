@@ -15,7 +15,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.osgl._;
+import org.osgl.$;
 import org.osgl.cache.CacheService;
 import org.osgl.http.H;
 import org.osgl.mvc.result.Result;
@@ -71,7 +71,7 @@ public class ActTestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class) args[0]);
+                return $.newInstance((Class) args[0]);
             }
         }).when(actionContext).newInstance(any(Class.class));
         when(app.config()).thenReturn(appConfig);
@@ -80,7 +80,7 @@ public class ActTestBase extends Assert {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return _.newInstance((Class) args[0]);
+                return $.newInstance((Class) args[0]);
             }
         });
         baos = new ByteArrayOutputStream();
@@ -98,7 +98,7 @@ public class ActTestBase extends Assert {
 
     protected void applyResult(Result result) {
         if (result instanceof RenderAny) {
-            RenderAny any = _.cast(result);
+            RenderAny any = $.cast(result);
             any.apply(actionContext);
         } else {
             result.apply(request, response);
