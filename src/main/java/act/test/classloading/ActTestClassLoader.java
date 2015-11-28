@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import static org.mockito.Matchers.anyString;
