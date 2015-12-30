@@ -48,6 +48,7 @@ public class ActTestBase extends Assert {
 
     @Before
     public void _before() throws Exception {
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         app = mock(App.class);
         appClassLoader = mock(AppClassLoader.class);
         cache = mock(CacheService.class);

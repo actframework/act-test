@@ -39,7 +39,12 @@ public class ActTestRunner extends Runner {
             }
             classLoader.testProperties(p);
         }
-        Thread.currentThread().setContextClassLoader(classLoader);
+        // When it runs (in intellij IDEA) multiple test cases that extends ActTestBase
+        // multiple ActTestClassLoader will be created and the
+        // last will be come the current thread's context class loader
+        // which will trigger strange error when deserialize data from
+        // mongodb. Thus we need to comment out this line
+        // Thread.currentThread().setContextClassLoader(classLoader);
         innerRunnerClass = $.classForName(JUnit4.class.getName(), classLoader);
         String testFileClassName = testFileClass.getName();
         Class<?> testClass = $.classForName(testFileClassName, classLoader);
