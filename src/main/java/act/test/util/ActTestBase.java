@@ -8,6 +8,9 @@ import act.event.EventBus;
 import act.job.AppJobManager;
 import act.route.Router;
 import act.view.RenderAny;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -114,6 +117,14 @@ public class ActTestBase extends Assert {
 
     protected String responseAsString() {
         return new String(baos.toByteArray());
+    }
+
+    protected JSONObject responseAsJSONObject() {
+        return JSON.parseObject(responseAsString());
+    }
+
+    protected JSONArray responseAsJSONArray() {
+        return JSON.parseArray(responseAsString());
     }
 
     protected static void isNull(Object a) {
