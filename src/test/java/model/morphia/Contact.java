@@ -53,7 +53,7 @@ public class Contact extends MorphiaModel {
         this.companyId = companyId;
     }
 
-    public static class Dao extends MorphiaDao<ObjectId, Contact, Dao> {
+    public static class Dao extends MorphiaDao<Contact> {
 
         private Account.Dao accDao;
 

@@ -2,22 +2,13 @@ package act.test.util;
 
 import act.app.DbServiceManager;
 import act.db.Dao;
-import act.db.DbService;
 import act.test.MongoTestBase;
-import act.test.TestBase;
 import model.morphia.Account;
-import model.morphia.Address;
 import model.morphia.Contact;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.osgl.$;
-import org.osgl.util.E;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -35,7 +26,7 @@ public class MorphiaFixtureTest extends MongoTestBase {
         ctctDao = new Contact.Dao(accDao);
         ctctDao.setDatastore(ds());
         dbServiceManager = mock(DbServiceManager.class);
-        when(mockApp.dbServiceManager()).thenReturn(dbServiceManager);
+        when(app.dbServiceManager()).thenReturn(dbServiceManager);
         when(dbServiceManager.dao(any(Class.class))).thenAnswer(new Answer<Dao>() {
             @Override
             public Dao answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -49,7 +40,7 @@ public class MorphiaFixtureTest extends MongoTestBase {
                 return null;
             }
         });
-        fixture = new Fixture(mockApp);
+        fixture = new Fixture(app);
         super.prepareData();
     }
 

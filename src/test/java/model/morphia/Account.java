@@ -15,7 +15,7 @@ public class Account extends MorphiaModel {
         this.name = name;
     }
 
-    public static class Dao extends MorphiaDao<ObjectId, Account, Dao> {
+    public static class Dao extends MorphiaDao<Account> {
 
         public Dao() {
             super(Account.class);

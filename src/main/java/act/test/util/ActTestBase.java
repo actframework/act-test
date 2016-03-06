@@ -109,7 +109,7 @@ public class ActTestBase extends Assert {
         }
     }
 
-    protected void setup() {}
+    protected void setup() throws Exception {}
 
     protected byte[] responseAsByteArray() {
         return baos.toByteArray();

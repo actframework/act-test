@@ -1,19 +1,19 @@
 package act.test;
 
-import act.db.morphia.util.DateTimeConverter;
+import act.db.morphia.util.JodaDateTimeConverter;
+import act.test.util.ActDbTestBase;
 import com.github.fakemongo.Fongo;
 import org.junit.Before;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-public abstract class MongoTestBase extends TestBase {
+public abstract class MongoTestBase extends ActDbTestBase {
 
     private static final String DB_NAME = "test";
 
     private Morphia morphia;
     private Datastore ds;
 
-    @Before
     public final void setup() throws Exception {
         super.setup();
         prepareMongoDB();
@@ -36,7 +36,7 @@ public abstract class MongoTestBase extends TestBase {
     protected void prepareData() {}
 
     protected void mapClasses() {
-        morphia.getMapper().getConverters().addConverter(new DateTimeConverter());
+        morphia.getMapper().getConverters().addConverter(new JodaDateTimeConverter());
         morphia.mapPackage("model.morphia", true);
     }
 
