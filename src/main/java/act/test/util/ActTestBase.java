@@ -147,6 +147,10 @@ public class ActTestBase extends Assert {
         assertEquals(o1, o2);
     }
 
+    protected static void ne(Object o1, Object o2) {
+        assertNotEquals(o1, o2);
+    }
+
     protected static void ceq(Object o1, Object o2) {
         assertEquals(S.string(o1), S.string(o2));
     }

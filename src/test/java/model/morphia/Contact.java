@@ -14,7 +14,7 @@ public class Contact extends MorphiaModel {
     private Address address;
     private ObjectId companyId;
 
-    private Contact() {}
+    public Contact() {}
 
     public Contact(String fname, String lname) {
         this.firstName = fname;

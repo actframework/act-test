@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import static org.mockito.Matchers.anyString;
@@ -106,6 +105,9 @@ public class ActTestClassLoader extends URLClassLoader {
         scannerManager.register(new JobByteCodeScanner());
         addEnhancer(ByteCodeEnhancer.CONTROLLER);
         addEnhancer(ByteCodeEnhancer.MAILER);
+        addEnhancer(ByteCodeEnhancer.DB_ENTITY_CLASS);
+        addEnhancer(ByteCodeEnhancer.DATA_OBJECT);
+        addEnhancer(ByteCodeEnhancer.SINGLETON);
         return this;
     }
 

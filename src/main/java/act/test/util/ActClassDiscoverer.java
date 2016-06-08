@@ -1,6 +1,5 @@
 package act.test.util;
 
-import act.test.util.ActClass;
 import org.osgl.util.C;
 
 import java.util.List;

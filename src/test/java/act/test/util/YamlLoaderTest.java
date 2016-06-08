@@ -1,19 +1,10 @@
 package act.test.util;
 
-import act.test.TestBase;
 import model.morphia.Address;
 import model.morphia.Contact;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.List;
 import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class YamlLoaderTest extends ActTestBase {
 

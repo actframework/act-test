@@ -26,9 +26,12 @@ public class Fixture {
         return loadYamlFile(yamlFile, "model");
     }
 
+    public Map<String, Object> loadYamlFile(URL url, String pkgName) {
+        return yamlLoader.load(url, pkgName, dbServiceManager);
+    }
+
     public Map<String, Object> loadYamlFile(String yamlFile, String pkgName) {
         File file = new File(yamlFile);
-        Map<Class, List> repo;
         if (!file.exists() && !file.canRead()) {
             URL url = getClass().getResource(yamlFile);
             if (null == url) {
