@@ -44,7 +44,7 @@ public class ActTestClassLoader extends URLClassLoader {
     private C.List<ByteCodeEnhancer> enhancerList = C.newList();
     private App app;
     private List<String> classNamePattern;
-    protected ControllerClassMetaInfoManager controllerInfo = new ControllerClassMetaInfoManager();
+    protected ControllerClassMetaInfoManager controllerInfo;
     protected MailerClassMetaInfoManager mailerInfo = new MailerClassMetaInfoManager();
     protected JobClassMetaInfoManager jobInfo = new JobClassMetaInfoManager();
     private AppCodeScannerManager scannerManager;
@@ -53,6 +53,7 @@ public class ActTestClassLoader extends URLClassLoader {
     public ActTestClassLoader(App app, List<String> actClassNamePatterns) {
         super(urls(ActTestRunner.class.getClassLoader()), ActTestRunner.class.getClassLoader());
         this.classNamePattern = $.notNull(actClassNamePatterns);
+        this.controllerInfo = new ControllerClassMetaInfoManager(app);
         this.app(app);
     }
 
@@ -105,9 +106,9 @@ public class ActTestClassLoader extends URLClassLoader {
         scannerManager.register(new JobByteCodeScanner());
         addEnhancer(ByteCodeEnhancer.CONTROLLER);
         addEnhancer(ByteCodeEnhancer.MAILER);
-        addEnhancer(ByteCodeEnhancer.DB_ENTITY_CLASS);
-        addEnhancer(ByteCodeEnhancer.DATA_OBJECT);
-        addEnhancer(ByteCodeEnhancer.SINGLETON);
+        //addEnhancer(ByteCodeEnhancer.DB_ENTITY_CLASS);
+        //addEnhancer(ByteCodeEnhancer.DATA_OBJECT);
+        //addEnhancer(ByteCodeEnhancer.SINGLETON);
         return this;
     }
 
