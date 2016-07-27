@@ -29,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @Ignore
@@ -80,7 +79,7 @@ public class ActTestBase extends Assert {
         }).when(actionContext).newInstance(any(Class.class));
         when(app.config()).thenReturn(appConfig);
         when(app.router()).thenReturn(router);
-        when(app.newInstance(any(Class.class))).thenAnswer(new Answer<Object>() {
+        when(app.getInstance(any(Class.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
