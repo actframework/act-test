@@ -60,8 +60,6 @@ public class ActTestBase extends Assert {
         jobManager = mock(AppJobManager.class);
         eventBus = mock(EventBus.class);
         appConfig = mock(AppConfig.class);
-        actionContext = spy(ActionContext.create(app, request, response));
-        doReturn(session).when(actionContext).session();
         router = mock(Router.class);
         Field f = App.class.getDeclaredField("INST");
         f.setAccessible(true);
@@ -70,13 +68,6 @@ public class ActTestBase extends Assert {
         when(app.classLoader()).thenReturn(appClassLoader);
         when(app.jobManager()).thenReturn(jobManager);
         when(app.eventBus()).thenReturn(eventBus);
-        doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                return $.newInstance((Class) args[0]);
-            }
-        }).when(actionContext).newInstance(any(Class.class));
         when(app.config()).thenReturn(appConfig);
         when(app.router()).thenReturn(router);
         when(app.getInstance(any(Class.class))).thenAnswer(new Answer<Object>() {
@@ -86,6 +77,10 @@ public class ActTestBase extends Assert {
                 return $.newInstance((Class) args[0]);
             }
         });
+        when(appConfig.corsEnabled()).thenReturn(false);
+        when(request.method()).thenReturn(H.Method.GET);
+        actionContext = spy(ActionContext.create(app, request, response));
+        doReturn(session).when(actionContext).session();
         baos = new ByteArrayOutputStream();
         when(response.outputStream()).thenReturn(baos);
         when(response.writeContent(anyString())).thenAnswer(new Answer<H.Response>() {

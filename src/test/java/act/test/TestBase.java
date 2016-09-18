@@ -1,5 +1,6 @@
 package act.test;
 
+import act.app.data.StringValueResolverManager;
 import act.conf.AppConfig;
 import act.event.EventBus;
 import act.job.AppJobManager;
@@ -102,6 +103,7 @@ public class TestBase extends Assert {
     protected H.Request mockReq;
     protected H.Response mockResp;
     protected EventBus mockEventBus;
+    protected StringValueResolverManager resolverManager;
 
     protected void setup() throws Exception {
         mockApp = mock(App.class);
@@ -110,20 +112,15 @@ public class TestBase extends Assert {
         f.set(null, mockApp);
         mockJobManager = mock(AppJobManager.class);
         mockEventBus = mock(EventBus.class);
+        resolverManager = mock(StringValueResolverManager.class);
         when(mockApp.jobManager()).thenReturn(mockJobManager);
         when(mockApp.eventBus()).thenReturn(mockEventBus);
+        when(mockApp.resolverManager()).thenReturn(resolverManager);
         mockAppConfig = mock(AppConfig.class);
         when(mockAppConfig.possibleControllerClass(argThat(new StartsWith("testapp.controller.")))).thenReturn(true);
         mockActionContext = mock(ActionContext.class);
         when(mockActionContext.app()).thenReturn(mockApp);
         when(mockActionContext.config()).thenReturn(mockAppConfig);
-        when(mockActionContext.newInstance(any(Class.class))).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                return $.newInstance((Class)args[0]);
-            }
-        });
         mockRouter = mock(Router.class);
         when(mockApp.config()).thenReturn(mockAppConfig);
         when(mockApp.router()).thenReturn(mockRouter);
