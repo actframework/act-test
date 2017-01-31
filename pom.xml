@@ -18,6 +18,9 @@
 ********************************************
 *            version history
 ********************************************
+0.4.0
+  - Update to actframework 0.4.0
+  - Update to act-morphia 0.5.0
 0.3.0
   - Update to actframework 0.3.x
 0.2.0
@@ -35,7 +38,7 @@
   <groupId>org.actframework</groupId>
   <artifactId>act-test</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.4.0-SNAPSHOT</version>
 
   <name>ACT TEST</name>
   <description>Provide facilities to test ActFramework application</description>
@@ -45,8 +48,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <git.url>git@github.com:actframework/act-test.git</git.url>
-    <act.version>0.3.1-SNAPSHOT</act.version>
-    <act-morphia.version>0.4.1-SNAPSHOT</act-morphia.version>
+    <act.version>0.4.0-SNAPSHOT</act.version>
+    <act-morphia.version>0.5.0-SNAPSHOT</act-morphia.version>
     <mockito.version>2.7.0</mockito.version>
     <fongo.version>2.0.12</fongo.version>
     <snakeyaml.version>1.17</snakeyaml.version>
