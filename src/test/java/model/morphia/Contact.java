@@ -6,8 +6,9 @@ import org.bson.types.ObjectId;
 import org.osgl.$;
 
 import javax.inject.Inject;
+import java.util.concurrent.ConcurrentMap;
 
-public class Contact extends MorphiaModel {
+public class Contact extends MorphiaModel<Contact> {
 
     private String firstName;
     private String lastName;

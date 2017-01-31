@@ -4,7 +4,7 @@ import act.db.morphia.MorphiaDao;
 import act.db.morphia.MorphiaModel;
 import org.bson.types.ObjectId;
 
-public class Account extends MorphiaModel {
+public class Account extends MorphiaModel<Account> {
     private String name;
 
     public String getName() {

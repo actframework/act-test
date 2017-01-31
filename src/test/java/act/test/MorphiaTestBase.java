@@ -19,11 +19,6 @@ public abstract class MorphiaTestBase extends ActDbTestBase {
     private Datastore ds;
 
     @Override
-    protected DaoBase daoBase() {
-        return new MorphiaDao();
-    }
-
-    @Override
     protected $.Function<Dao, Dao> createDaoProcessor() {
         return new $.Function<Dao, Dao>() {
             @Override

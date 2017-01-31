@@ -1,7 +1,5 @@
 package model.morphia;
 
-import act.db.morphia.MorphiaModel;
-
 public class Address {
     private String unit;
     private String street;

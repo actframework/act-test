@@ -3,6 +3,7 @@ package act.test.util;
 import act.db.Dao;
 import act.db.DaoBase;
 import act.db.Model;
+import act.db.morphia.MorphiaDao;
 import org.osgl.$;
 import org.osgl.util.C;
 import org.osgl.util.S;
@@ -11,9 +12,10 @@ import org.osgl.util.S;
  * Map Model class to corresponding Dao instance
  */
 public interface ModelDaoMapper {
+
     <T extends Dao> T mapFrom(Class<? extends Model> model);
 
-    public static enum ModelDaoStructure {
+    enum ModelDaoStructure {
         EmbeddedDao() {
             @Override
             public <T extends Dao> T tryFrom(Class<? extends Model> model) {
@@ -30,7 +32,7 @@ public interface ModelDaoMapper {
         public abstract <T extends Dao> T tryFrom(Class<? extends Model> model);
     }
 
-    public static class DefImpl implements ModelDaoMapper {
+    class DefImpl implements ModelDaoMapper {
 
         public class DefImplMapper {
             private Class<? extends Model> modelClass;
@@ -46,14 +48,12 @@ public interface ModelDaoMapper {
         }
 
         private ModelDaoStructure modelDaoStructure;
-        private DaoBase daoBase;
         private $.Function<Dao, Dao> daoProcessor;
 
         private C.Map<Class<? extends Model>, Dao> map = C.newMap();
 
-        public DefImpl(DaoBase daoBase, $.Function<Dao, Dao> daoProcessor) {
+        public DefImpl($.Function<Dao, Dao> daoProcessor) {
             modelDaoStructure = ModelDaoStructure.EmbeddedDao;
-            this.daoBase = daoBase;
             this.daoProcessor = daoProcessor;
         }
 
@@ -71,7 +71,7 @@ public interface ModelDaoMapper {
             if (null != dao) {
                 map.put(model, dao);
             }
-            return null == dao ? (T) daoBase : dao;
+            return null == dao ? (T) new MorphiaDao(model) : dao;
         }
     }
 }

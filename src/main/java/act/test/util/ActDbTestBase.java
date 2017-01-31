@@ -28,10 +28,8 @@ public abstract class ActDbTestBase extends ActTestBase {
         return $.F.identity();
     }
 
-    protected abstract DaoBase daoBase();
-
     protected ModelDaoMapper createModelDaoMapper() {
-        return new ModelDaoMapper.DefImpl(daoBase(), daoProcessor);
+        return new ModelDaoMapper.DefImpl(daoProcessor);
     }
 
     protected void setupModelDaoMapper(ModelDaoMapper modelDaoMapper) {
