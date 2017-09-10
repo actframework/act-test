@@ -1,6 +1,7 @@
 package act.test.util;
 
 import act.app.App;
+import act.job.AppJobManager;
 import act.test.classloading.ActTestClassLoader;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -26,7 +27,9 @@ public class ActTestRunner extends Runner {
     private ActTestClassLoader classLoader;
 
     public ActTestRunner(Class<?> testFileClass) {
+        AppJobManager jobManager = Mockito.mock(AppJobManager.class);
         App app = Mockito.mock(App.class);
+        Mockito.when(app.jobManager()).thenReturn(jobManager);
         List<String> pattern = ActClassDiscoverer.getActClassNamePatternsOn(testFileClass);
         classLoader =  new ActTestClassLoader(app, pattern);
         URL url = getClass().getResource("/act-test.properties");

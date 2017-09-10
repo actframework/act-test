@@ -1,7 +1,6 @@
 package act.test.classloading;
 
 import act.app.App;
-import act.app.AppByteCodeScanner;
 import act.controller.bytecode.ControllerEnhancer;
 import act.db.EntityClassEnhancer;
 import act.mail.bytecode.MailerEnhancer;
